@@ -1,0 +1,160 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="card p-4 mb-8">
+    <form action="/add_transaction" method="POST" class="flex items-center gap-4">
+        <select name="type" class="bg-gray-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-purple-400">
+            <option value="Expense">Expense</option>
+            <option value="Income">Income</option>
+        </select>
+        <input type="text" name="name" placeholder="Payment Name" class="flex-1 bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400" required>
+        <input type="number" step="0.01" name="amount" placeholder="Amount" class="w-32 bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400" required>
+        <select name="category" class="bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400">
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Bills">Bills</option>
+            <option value="Salary">Salary</option>
+        </select>
+        <input type="date" name="date" class="bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400" required>
+        <button type="submit" class="bg-black text-white px-8 py-3 rounded-xl font-bold hover:opacity-80 transition shadow-md">Save</button>
+    </form>
+</div>
+
+<div class="grid grid-cols-4 gap-6 mb-8">
+    <div class="card p-6 relative">
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Total balance</p>
+        <h2 class="text-3xl font-bold text-red-500">₱{{ data.balance }}</h2>
+        <p class="text-[10px] text-green-500 font-bold mt-2">↑ 12.1% <span class="text-gray-300 font-normal">vs last month</span></p>
+        <div class="absolute top-6 right-6 w-5 h-5 border border-gray-100 rounded-full flex items-center justify-center text-[10px] text-gray-300">↗</div>
+    </div>
+    <div class="card p-6 relative">
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Income</p>
+        <h2 class="text-3xl font-bold text-gray-900">₱{{ data.income }}</h2>
+        <p class="text-[10px] text-green-500 font-bold mt-2">↑ 6.3% <span class="text-gray-300 font-normal">vs last month</span></p>
+        <div class="absolute top-6 right-6 w-5 h-5 border border-gray-100 rounded-full flex items-center justify-center text-[10px] text-gray-300">↗</div>
+    </div>
+    <div class="card p-6 relative">
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Expense</p>
+        <h2 class="text-3xl font-bold text-gray-900">₱{{ data.expense }}</h2>
+        <p class="text-[10px] text-red-500 font-bold mt-2">↓ 2.4% <span class="text-gray-300 font-normal">vs last month</span></p>
+        <div class="absolute top-6 right-6 w-5 h-5 border border-gray-100 rounded-full flex items-center justify-center text-[10px] text-gray-300">↗</div>
+    </div>
+    <div class="card p-6 relative">
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2">Total savings</p>
+        <h2 class="text-3xl font-bold text-gray-900">₱{{ data.savings }}</h2>
+        <p class="text-[10px] text-green-500 font-bold mt-2">↑ 12.1% <span class="text-gray-300 font-normal">vs last month</span></p>
+        <div class="absolute top-6 right-6 w-5 h-5 border border-gray-100 rounded-full flex items-center justify-center text-[10px] text-gray-300">↗</div>
+    </div>
+</div>
+
+<div class="grid grid-cols-12 gap-8 mb-8">
+    <div class="col-span-8 card p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="font-bold text-lg">Money flow</h3>
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-[#10B981]"></div>
+                    <span class="text-xs text-gray-500 font-bold">Income</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-[#C4B5FD]"></div>
+                    <span class="text-xs text-gray-500 font-bold">Expense</span>
+                </div>
+            </div>
+        </div>
+        <div style="height: 300px;"><canvas id="moneyFlowChart"></canvas></div>
+    </div>
+    
+    <div class="col-span-4 card p-8 flex flex-col">
+        <h3 class="font-bold text-lg mb-8">Budget</h3>
+        <div class="flex-1 flex items-center justify-center">
+            <div class="relative w-56 h-56 flex items-center justify-center">
+                <canvas id="budgetDonutChart"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Expense</p>
+                    <p class="text-2xl font-extrabold text-gray-900 leading-none">
+                        ₱{{ data.expense }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card p-8">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="font-bold text-lg">Recent Transactions</h3>
+        <a href="/transactions" class="text-[#8B5CF6] text-xs font-bold hover:underline">View All</a>
+    </div>
+    <div class="space-y-4">
+        {% for t in transactions %}
+        <div class="flex justify-between items-center p-2">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mr-4 text-lg">
+                    {% if t.category == 'Food' %}🍔{% elif t.category == 'Savings' %}🎯{% elif t.category == 'Transport' %}🚗{% elif t.category == 'Shopping' %}🛍️{% elif t.category == 'Bills' %}📄{% else %}💰{% endif %}
+                </div>
+                <div>
+                    <p class="font-bold text-sm">{{ t.name }}</p>
+                    <p class="text-[10px] text-gray-400">{{ t.date }}</p>
+                </div>
+            </div>
+            <p class="font-bold text-sm {% if t.type == 'Income' %}text-green-500{% else %}text-red-500{% endif %}">
+                {% if t.type == 'Income' %}+{% else %}-{% endif %}₱{{ "{:,.2f}".format(t.amount) }}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    new Chart(document.getElementById('moneyFlowChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [
+                {
+                    label: 'Income',
+                    data: [0, 0, 0, 0, 0, 0, {{ data.income|replace(',','')|float }}],
+                    backgroundColor: '#10B981',
+                    borderRadius: 4,
+                    barThickness: 12
+                },
+                {
+                    label: 'Expense',
+                    data: [0, 0, 0, 0, 0, 0, {{ data.expense|replace(',','')|float }}],
+                    backgroundColor: '#C4B5FD',
+                    borderRadius: 4,
+                    barThickness: 12
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { display: false }, x: { grid: { display: false } } }
+        }
+    });
+
+    new Chart(document.getElementById('budgetDonutChart'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                {% set exp_raw = data.expense|replace(',','')|float %}
+                {% set inc_raw = data.income|replace(',','')|float %}
+                {% set remaining = (inc_raw - exp_raw) if inc_raw > exp_raw else 0 %}
+                data: [{{ exp_raw }}, {{ remaining if remaining > 0 else 0.1 }}],
+                backgroundColor: ['#8B5CF6', '#F3F4F6'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '78%', 
+            plugins: { tooltip: { enabled: false }, legend: { display: false } }
+        }
+    });
+</script>
+{% endblock %}

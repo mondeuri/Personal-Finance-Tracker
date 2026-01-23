@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSet - {{ active_page }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #F8F9FD; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: #1A1D1F; 
+        }
+        .sidebar-active { 
+            background-color: #8B5CF6; 
+            color: white !important; 
+        }
+        .card { 
+            background: white; 
+            border-radius: 24px; 
+            border: 1px solid #F1F1F1; 
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.02); 
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in { 
+            animation: slideIn 0.3s ease-out forwards; 
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+    {% if current_user.is_authenticated %}
+    <aside class="w-64 bg-white border-r flex flex-col p-6 shrink-0 relative">
+        <div class="text-2xl font-bold flex items-center mb-10">
+            <div class="bg-black text-white px-2 py-1 rounded-xl mr-2 text-xl">f</div> Finance
+        </div>
+        <nav class="space-y-1 flex-1">
+            {% for label, icon, route in [
+                ('Dashboard', '⊞', 'dashboard'),
+                ('Transactions', '⇄', 'transactions'),
+                ('Wallet', '👛', 'wallet'),
+                ('Savings', '🎯', 'savings'),
+                ('Budget', '💰', 'budget'),
+                ('Analytics', '📊', 'analytics'),
+                ('Settings', '⚙', 'settings')
+            ] %}
+            <a href="{{ url_for(route) }}" class="flex items-center px-4 py-3 rounded-2xl font-medium text-sm transition {% if active_page == label %}sidebar-active{% else %}text-gray-400 hover:bg-gray-50{% endif %}">
+                <span class="mr-3 text-lg">{{ icon }}</span> {{ label }}
+            </a>
+            {% endfor %}
+        </nav>
+        <div class="mt-auto space-y-1 pb-4">
+            <a href="#" class="flex items-center px-4 py-3 text-gray-400 hover:text-black text-sm"><span class="mr-3">❓</span> Help</a>
+            <a href="{{ url_for('logout') }}" class="flex items-center px-4 py-3 text-gray-400 hover:text-red-500 text-sm transition">
+                <span class="mr-3">🚪</span> Log out
+            </a>
+        </div>
+    </aside>
+    {% endif %}
+
+    <main class="flex-1 overflow-y-auto p-10 relative">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="fixed top-10 right-10 z-50 space-y-3">
+              {% for category, message in messages %}
+                <div class="bg-black text-white px-6 py-4 rounded-2xl shadow-2xl border-l-4 border-[#8B5CF6] flex items-center animate-slide-in">
+                    <span class="mr-3 text-purple-400">✨</span>
+                    <span class="text-sm font-bold">{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-4 text-gray-500 hover:text-white">&times;</button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% if current_user.is_authenticated %}
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h1 class="text-3xl font-bold">
+                    {% if active_page == 'Dashboard' %}Welcome back, {{ current_user.name }}!{% else %}{{ active_page }}{% endif %}
+                </h1>
+                <p class="text-gray-400 text-sm mt-1">It is the best time to manage your finances</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="w-10 h-10 flex items-center justify-center bg-white border border-gray-100 rounded-full shadow-sm">🔍</button>
+                <button class="w-10 h-10 flex items-center justify-center bg-white border border-gray-100 rounded-full shadow-sm relative">
+                    🔔 <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </button>
+                <div class="flex items-center bg-white border border-gray-100 rounded-full px-3 py-1 shadow-sm">
+                    <img src="https://ui-avatars.com/api/?name={{ current_user.name }}&background=random" class="w-8 h-8 rounded-full mr-2">
+                    <div class="text-[10px] leading-tight mr-4">
+                        <div class="font-bold">{{ current_user.name }}</div>
+                        <div class="text-gray-400">{{ current_user.email }}</div>
+                    </div>
+                </div>
+                <button class="bg-[#8B5CF6] text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-purple-100 hover:opacity-90 transition">+ Add new widget</button>
+            </div>
+        </header>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.animate-slide-in');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateX(100%)';
+                msg.style.transition = 'all 0.5s ease';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

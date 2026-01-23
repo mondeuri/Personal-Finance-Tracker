@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10">
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="alert-container" class="mb-6 transition-opacity duration-500">
+            {% for category, message in messages %}
+              <div class="p-4 rounded-2xl flex items-center justify-center space-x-2 shadow-sm border
+                  {% if category == 'success' %} bg-green-50 border-green-100 text-green-600 {% else %} bg-red-50 border-red-100 text-red-600 {% endif %}">
+                  <span>{% if category == 'success' %}✅{% else %}⚠️{% endif %}</span>
+                  <span class="font-bold text-sm uppercase tracking-wide">{{ message }}</span>
+              </div>
+            {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card p-10 shadow-sm">
+        <div class="mb-8">
+            <h3 class="font-bold text-2xl text-gray-800">Account Settings</h3>
+            <p class="text-gray-400 text-sm">Update your profile and app preferences.</p>
+        </div>
+        
+        <form action="/settings" method="POST" class="space-y-6">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
+                <input type="text" name="name" value="{{ data.name }}" 
+                       class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-purple-400 transition" required>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Email Address</label>
+                <input type="email" name="email" value="{{ data.email }}" 
+                       class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-purple-400 transition" required>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">App Currency</label>
+                <select name="currency" class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm font-bold focus:ring-2 focus:ring-purple-400 appearance-none cursor-pointer">
+                    <option value="₱" {% if data.symbol == '₱' %}selected{% endif %}>PHP - Philippine Peso (₱)</option>
+                    <option value="$" {% if data.symbol == '$' %}selected{% endif %}>USD - US Dollar ($)</option>
+                    <option value="€" {% if data.symbol == '€' %}selected{% endif %}>EUR - Euro (€)</option>
+                    <option value="£" {% if data.symbol == '£' %}selected{% endif %}>GBP - British Pound (£)</option>
+                    <option value="¥" {% if data.symbol == '¥' %}selected{% endif %}>JPY - Japanese Yen (¥)</option>
+                </select>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-bold hover:bg-gray-800 transition shadow-lg flex items-center justify-center space-x-2">
+                    <span>Save Changes</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-8 p-6 bg-red-50 rounded-3xl border border-red-100 flex justify-between items-center">
+        <div>
+            <h4 class="text-red-600 font-bold text-sm">Reset History</h4>
+            <p class="text-red-400 text-xs">This will permanently delete all transaction records.</p>
+        </div>
+        <a href="{{ url_for('clear_history') }}" onclick="return confirm('Are you sure? This cannot be undone.')" 
+           class="bg-white text-red-600 px-6 py-2 rounded-xl text-xs font-bold border border-red-200 hover:bg-red-600 hover:text-white transition">
+            Clear All
+        </a>
+    </div>
+</div>
+
+<script>
+    setTimeout(function() {
+        const alert = document.getElementById('alert-container');
+        if (alert) {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 3000);
+</script>
+{% endblock %}

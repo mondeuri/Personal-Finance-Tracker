@@ -1,0 +1,148 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="grid grid-cols-12 gap-8">
+    <div class="col-span-12 lg:col-span-5 space-y-8">
+        <div class="h-48 bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] rounded-[32px] p-8 text-white relative overflow-hidden shadow-2xl shadow-purple-200">
+            <div class="relative z-10 flex flex-col h-full justify-center">
+                <div class="text-sm font-medium opacity-80 uppercase tracking-widest mb-2">Available Balance</div>
+                <div class="text-5xl font-bold tracking-tight">${{ data.balance }}</div>
+            </div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-black/10 rounded-full"></div>
+        </div>
+
+        <div class="card p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-lg">My Accounts</h3>
+                <button onclick="toggleAddModal()" class="w-8 h-8 bg-black text-white rounded-xl flex items-center justify-center font-bold hover:opacity-80 transition">+</button>
+            </div>
+            <div class="space-y-4">
+                {% for acc in accounts %}
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-4 shadow-sm text-lg">{{ acc.icon }}</div>
+                        <div>
+                            <p class="font-bold text-sm">{{ acc.name }}</p>
+                            <p class="text-[10px] text-gray-400">{{ acc.type }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <p class="font-bold text-sm">${{ "{:,.2f}".format(acc.balance) }}</p>
+                        </div>
+                        <button onclick="openAdjustModal('{{ acc.id }}', '{{ acc.name }}')" class="text-xs hover:bg-gray-200 p-2 rounded-lg transition">⚙️</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card p-8 grid grid-cols-2 gap-4">
+            <div class="p-6 bg-green-50 rounded-3xl">
+                <p class="text-xs text-green-600 font-bold uppercase mb-2">Total Income</p>
+                <p class="text-2xl font-bold text-green-700">${{ data.income }}</p>
+            </div>
+            <div class="p-6 bg-red-50 rounded-3xl">
+                <p class="text-xs text-red-600 font-bold uppercase mb-2">Total Expense</p>
+                <p class="text-2xl font-bold text-red-700">${{ data.expense }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-span-12 lg:col-span-7">
+        <div class="card p-8 h-full">
+            <h3 class="font-bold text-lg mb-8">Wallet Insights</h3>
+            <div class="space-y-6">
+                <div class="flex items-center justify-between p-4 border-b border-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-xl mr-4">🎯</div>
+                        <div>
+                            <p class="font-bold text-sm">Savings Ratio</p>
+                            <p class="text-xs text-gray-400">Total amount in vault</p>
+                        </div>
+                    </div>
+                    <p class="font-bold text-[#8B5CF6]">${{ data.savings }}</p>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-3xl">
+                    <p class="text-sm text-gray-500 mb-4 font-medium">Monthly Progress</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-[#8B5CF6] h-2 rounded-full" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addAccountModal" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="card p-8 w-full max-w-md shadow-2xl">
+        <h3 class="font-bold text-xl mb-6">Add New Account</h3>
+        <form action="/add_account" method="POST" class="space-y-4">
+            <input type="text" name="name" placeholder="Bank Name" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400" required>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="type" placeholder="Type" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400">
+                <input type="text" name="icon" placeholder="Emoji" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400">
+            </div>
+            <input type="number" step="0.01" name="balance" placeholder="Initial Balance" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-400">
+            <div class="flex space-x-3 mt-4">
+                <button type="button" onclick="toggleAddModal()" class="flex-1 bg-gray-100 py-3 rounded-2xl font-bold text-sm">Cancel</button>
+                <button type="submit" class="flex-1 bg-black text-white py-3 rounded-2xl font-bold text-sm">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="adjustBalanceModal" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="card p-8 w-full max-w-md shadow-2xl">
+        <h3 class="font-bold text-xl mb-2">Adjust Balance</h3>
+        <p id="adjustAccountName" class="text-sm text-gray-400 mb-6"></p>
+        <form id="adjustBalanceForm" method="POST" class="space-y-6">
+            <div>
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Transaction Amount</label>
+                <input type="number" step="0.01" name="amount" placeholder="0.00" class="w-full bg-gray-50 border-none rounded-xl p-4 text-lg font-bold focus:ring-2 focus:ring-purple-400" required>
+            </div>
+
+            <input type="hidden" name="action" id="adjustAction" value="plus">
+
+            <div class="grid grid-cols-2 gap-4">
+                <button type="button" onclick="submitAdjust(event, 'plus')" class="bg-green-500 text-white py-4 rounded-2xl font-bold flex flex-col items-center justify-center hover:opacity-90 transition">
+                    <span class="text-2xl">+</span>
+                    <span class="text-xs uppercase tracking-widest">Add</span>
+                </button>
+                <button type="button" onclick="submitAdjust(event, 'minus')" class="bg-red-500 text-white py-4 rounded-2xl font-bold flex flex-col items-center justify-center hover:opacity-90 transition">
+                    <span class="text-2xl">−</span>
+                    <span class="text-xs uppercase tracking-widest">Withdraw</span>
+                </button>
+            </div>
+            <button type="button" onclick="closeAdjustModal()" class="w-full text-gray-400 text-xs font-bold uppercase tracking-widest mt-2">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleAddModal() {
+    document.getElementById('addAccountModal').classList.toggle('hidden');
+}
+
+function openAdjustModal(id, name) {
+    const modal = document.getElementById('adjustBalanceModal');
+    const form = document.getElementById('adjustBalanceForm');
+    const nameDisplay = document.getElementById('adjustAccountName');
+
+    nameDisplay.innerText = "Account: " + name;
+    form.action = "/adjust_account/" + id;
+    modal.classList.remove('hidden');
+}
+
+function closeAdjustModal() {
+    document.getElementById('adjustBalanceModal').classList.add('hidden');
+}
+
+function submitAdjust(event, type) {
+    event.preventDefault(); 
+    document.getElementById('adjustAction').value = type;
+    document.getElementById('adjustBalanceForm').submit();
+}
+</script>
+{% endblock %}

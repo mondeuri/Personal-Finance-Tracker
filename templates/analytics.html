@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="grid grid-cols-12 gap-8">
+    <div class="col-span-12 grid grid-cols-3 gap-6">
+        <div class="card p-6">
+            <p class="text-gray-500 font-medium text-[10px] uppercase tracking-widest mb-2">Savings Rate</p>
+            {% set raw_inc = data.income|replace(',','')|float %}
+            {% set raw_sav = data.savings|replace(',','')|float %}
+            {% set sav_rate = (raw_sav / raw_inc * 100) if raw_inc > 0 else 0 %}
+            <h2 class="text-3xl font-bold text-purple-600">{{ "{:,.1f}".format(sav_rate) }}%</h2>
+            <p class="text-[10px] text-gray-400 mt-2">of total income saved</p>
+        </div>
+        <div class="card p-6">
+            <p class="text-gray-500 font-medium text-[10px] uppercase tracking-widest mb-2">Daily Avg. Spend</p>
+            {% set raw_exp = data.expense|replace(',','')|float %}
+            <h2 class="text-3xl font-bold text-red-500">{{ data.symbol }}{{ "{:,.2f}".format(raw_exp / 30) }}</h2>
+            <p class="text-[10px] text-gray-400 mt-2">based on last 30 days</p>
+        </div>
+        <div class="card p-6">
+            <p class="text-gray-500 font-medium text-[10px] uppercase tracking-widest mb-2">Net Cash Flow</p>
+            {% set flow = raw_inc - raw_exp %}
+            <h2 class="text-3xl font-bold {% if flow >= 0 %}text-green-500{% else %}text-red-500{% endif %}">
+                {{ data.symbol }}{{ "{:,.2f}".format(flow) }}
+            </h2>
+            <p class="text-[10px] text-gray-400 mt-2">Income minus Expenses</p>
+        </div>
+    </div>
+    <div class="col-span-12 lg:col-span-8 card p-8">
+        <h3 class="font-bold text-lg mb-8">Yearly Spending Trend</h3>
+        <div style="height: 300px;"><canvas id="yearlyTrendChart"></canvas></div>
+    </div>
+    <div class="col-span-12 lg:col-span-4 card p-8">
+        <h3 class="font-bold text-lg mb-8">Expense Heatmap</h3>
+        <div style="height: 250px;"><canvas id="categoryRadarChart"></canvas></div>
+    </div>
+</div>
+<script>
+    const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+    new Chart(document.getElementById('yearlyTrendChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Spending',
+                data: [1200, 1900, 1500, 2100, 1800, 2400, {{ data.expense|replace(",","") }}],
+                borderColor: '#8B5CF6',
+                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3
+            }]
+        },
+        options: { ...commonOptions, scales: { y: { display: false }, x: { grid: { display: false } } } }
+    });
+    new Chart(document.getElementById('categoryRadarChart'), {
+        type: 'radar',
+        data: {
+            labels: {{ budget_categories | safe if budget_categories else ["Data"] }},
+            datasets: [{
+                data: {{ budget_values | safe if budget_values else [1] }},
+                backgroundColor: 'rgba(196, 181, 253, 0.4)',
+                borderColor: '#8B5CF6',
+                borderWidth: 2
+            }]
+        },
+        options: { ...commonOptions, scales: { r: { angleLines: { display: false }, ticks: { display: false } } } }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    <h2 class="text-2xl font-bold">Transactions</h2>
+    
+    <div class="flex flex-1 md:flex-initial items-center gap-3 w-full md:w-auto">
+        <div class="relative flex-1 md:w-64">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </span>
+            <input type="text" id="transactionSearch" placeholder="Search transactions..." 
+                class="w-full bg-white border-none rounded-xl py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-purple-400 shadow-sm">
+        </div>
+
+        <select id="categoryFilter" 
+            class="bg-white border-none rounded-xl py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-purple-400 shadow-sm cursor-pointer">
+            <option value="all">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Bills">Bills</option>
+            <option value="Savings">Savings</option>
+            <option value="Income">Income</option>
+        </select>
+    </div>
+</div>
+
+<div class="card overflow-hidden">
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="border-b border-gray-50">
+                <th class="px-8 py-5 text-[10px] font-bold uppercase text-gray-400 tracking-widest">Transaction</th>
+                <th class="px-8 py-5 text-[10px] font-bold uppercase text-gray-400 tracking-widest">Category</th>
+                <th class="px-8 py-5 text-[10px] font-bold uppercase text-gray-400 tracking-widest">Date</th>
+                <th class="px-8 py-5 text-[10px] font-bold uppercase text-gray-400 tracking-widest text-right">Amount</th>
+            </tr>
+        </thead>
+        <tbody id="transactionTableBody">
+            {% for t in transactions %}
+            <tr class="transaction-row border-b border-gray-50 hover:bg-gray-50/50 transition-colors" 
+                data-category="{{ t.category }}" 
+                data-name="{{ t.name | lower }}">
+                <td class="px-8 py-5">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mr-4 text-lg">
+                            {% if t.category == 'Food' %}🍔{% elif t.category == 'Savings' %}🎯{% elif t.category == 'Transport' %}🚗{% elif t.category == 'Shopping' %}🛍️{% elif t.category == 'Bills' %}📄{% else %}💰{% endif %}
+                        </div>
+                        <span class="font-bold text-sm text-gray-900">{{ t.name }}</span>
+                    </div>
+                </td>
+                <td class="px-8 py-5">
+                    <span class="text-xs font-bold px-3 py-1 rounded-full bg-gray-100 text-gray-500 uppercase tracking-tight">
+                        {{ t.category }}
+                    </span>
+                </td>
+                <td class="px-8 py-5 text-sm text-gray-400">{{ t.date }}</td>
+                <td class="px-8 py-5 text-right font-bold text-sm {% if t.type == 'Income' %}text-green-500{% else %}text-red-500{% endif %}">
+                    {% if t.type == 'Income' %}+{% else %}-{% endif %}{{ data.symbol }}{{ "{:,.2f}".format(t.amount) }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div id="noResults" class="hidden p-20 text-center">
+        <p class="text-gray-400 text-sm italic">No transactions found matching your criteria.</p>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('transactionSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const rows = document.querySelectorAll('.transaction-row');
+    const noResults = document.getElementById('noResults');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value;
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            const category = row.getAttribute('data-category');
+            
+            const matchesSearch = name.includes(searchTerm);
+            const matchesCategory = selectedCategory === 'all' || category === selectedCategory;
+
+            if (matchesSearch && matchesCategory) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        
+        if (visibleCount === 0) {
+            noResults.classList.remove('hidden');
+        } else {
+            noResults.classList.add('hidden');
+        }
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    categoryFilter.addEventListener('change', filterTable);
+</script>
+{% endblock %}
